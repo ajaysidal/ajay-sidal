@@ -1,0 +1,27 @@
+name: Local Config
+version: 1.0.0
+schema: v1
+
+models:
+  - name: Silas-01 (14b)
+    provider: ollama
+    model: qwen2.5-coder:14bb
+    apiBase: http://127.0.0.1:11434
+    roles:
+      - chat
+      - edit
+      - apply
+
+  - name: Silas-01 Autocomplete
+    provider: ollama
+    model: qwen2.5-coder:14b
+    apiBase: http://127.0.0.1:11434
+    roles:
+      - autocomplete
+
+  - name: Nomic Embed
+    provider: ollama
+    model: nomic-embed-text:latest
+    apiBase: http://127.0.0.1:11434
+    roles:
+      - embed

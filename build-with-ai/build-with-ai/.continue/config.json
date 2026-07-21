@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/continuedev/continue/main/extensions/vscode/config_schema.json",
+  "models": [
+    {
+      "title": "Silas-01 (14b-instruct)",
+      "provider": "ollama",
+      "model": "qwen2.5-coder:14b",
+      "apiBase": "http://127.0.0.1:11434"
+    },
+    {
+      "title": "Silas-01 (7b)",
+      "provider": "ollama",
+      "model": "qwen2.5-coder:7b",
+      "apiBase": "http://127.0.0.1:11434"
+    }
+  ],
+  "tabAutocompleteModel": {
+    "title": "Silas-01 Autocomplete",
+    "provider": "ollama",
+    "model": "qwen2.5-coder:1.5b",
+    "apiBase": "http://127.0.0.1:11434"
+  },
+  "allowAnonymousTelemetry": false
+}

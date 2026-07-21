@@ -1,0 +1,6 @@
+POST https://buildwithai.digital/api/silas/chat
+Content-Type: application/json
+
+{
+  "message": "Hello Silas from VS Code"
+}

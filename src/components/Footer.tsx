@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
     <footer className="border-t border-white/10 bg-[#050816] py-10">
-      <div className="mx-auto max-w-7xl px-6 text-center lg:px-10">
+      <div className="w-full px-6 md:px-12 lg:px-24 text-center">
         <p className="text-sm uppercase tracking-[0.35em] text-cyan-300/80">
           Ajay Sidal
         </p>

@@ -2,25 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  color-scheme: dark;
-}
-
-html {
-  scroll-behavior: smooth;
+/* Global Background with Fixed Glow Effect */
+html, body {
+  overflow-x: hidden;
 }
 
 body {
-  @apply min-h-screen bg-midnight text-slate-100 antialiased;
-  background-image: radial-gradient(circle at top left, rgba(56,189,248,0.18), transparent 24%), radial-gradient(circle at 80% 8%, rgba(139,92,246,0.16), transparent 18%), linear-gradient(135deg, rgba(6,8,22,1) 0%, rgba(8,12,26,1) 100%);
+  background-color: #050816;
+  background-image: 
+    radial-gradient(circle at top left, rgba(0,255,178,0.12), transparent 40%),
+    radial-gradient(circle at bottom right, rgba(99,102,241,0.12), transparent 35%),
+    radial-gradient(circle at center, rgba(217,70,239,0.05), transparent 50%);
+  background-attachment: fixed;
+  color: #f8fafc;
 }
 
-::selection {
-  @apply bg-cyan/30 text-white;
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #050816;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(34, 211, 238, 0.3);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 211, 238, 0.6);
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Smooth transitions for all interactive elements */
+a, button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Subtle grid overlay for that spatial tech feel */
+.grid-overlay {
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
 }

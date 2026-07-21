@@ -1,0 +1,37 @@
+import { Metadata } from 'next'
+import LaunchingSoonClient from '@/components/launching-soon/LaunchingSoonClient'
+
+export const metadata: Metadata = {
+  title: 'Launching Soon | Build With AI Enterprise',
+  description: 'AI-native infrastructure for the next generation of on-chain operations. Early access opening 19 May 2026.',
+}
+
+export default function LaunchingSoon() {
+  return (
+    <main className="min-h-screen flex flex-col items-center justify-center bg-[#0A0F1A] px-4 py-20 text-center relative overflow-hidden selection:bg-teal-500/30">
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0A0F1A] via-[#0F172A] to-[#0A0F1A] pointer-events-none" />
+      <div className="relative z-10 max-w-3xl w-full space-y-10">
+        <div className="flex justify-center">
+          <img src="/logo.svg" alt="Build With AI" className="w-20 h-20 drop-shadow-[0_0_15px_rgba(0,243,255,0.3)]" />
+        </div>
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white leading-[1.1] antialiased">
+          The Future of AI-Native Infrastructure is Coming.
+        </h1>
+        <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed antialiased">
+          Sovereign architecture. Zero dependency. Enterprise-grade security. 
+          We’re engineering a new standard for on-chain operations, identity, and autonomous tooling.
+        </p>
+        <LaunchingSoonClient />
+        <div className="flex flex-col items-center gap-6 pt-8 border-t border-neutral-800/50">
+          <div className="flex gap-6">
+            <a href="#" className="text-neutral-500 hover:text-teal-400 transition-colors text-sm tracking-wide">X</a>
+            <a href="#" className="text-neutral-500 hover:text-teal-400 transition-colors text-sm tracking-wide">Telegram</a>
+            <a href="#" className="text-neutral-500 hover:text-teal-400 transition-colors text-sm tracking-wide">Discord</a>
+            <a href="#" className="text-neutral-500 hover:text-teal-400 transition-colors text-sm tracking-wide">LinkedIn</a>
+          </div>
+          <a href="/leads" className="text-sm text-neutral-600 hover:text-teal-400 transition-colors tracking-wide">Contact Us</a>
+        </div>
+      </div>
+    </main>
+  )
+}

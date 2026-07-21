@@ -1,0 +1,151 @@
+"use client";
+import Link from 'next/link';
+import { useState } from 'react';
+import { Sun, Moon } from 'lucide-react';
+import { useTheme } from '@/components/providers/ThemeProvider';
+import DeferredNavbarWallet from '@/components/layout/DeferredNavbarWallet';
+import {
+  BOOK_APPOINTMENT_LINK,
+  MOBILE_NAV_LINKS,
+  PRIMARY_NAV_LINKS,
+  PRODUCT_LINKS,
+  PROTOCOL_LINKS,
+  SERVICE_LINKS,
+} from '@/config/site-links';
+
+export default function Navbar() {
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { theme, toggle } = useTheme();
+
+  return (
+    <nav className="w-full bg-[color:var(--bg-primary)]/90 backdrop-blur-md border-b border-[color:var(--bg-tertiary)] sticky top-0 z-50">
+      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+        
+        {/* Logo Area */}
+        <Link href="/" className="flex items-center gap-3">
+          <div className="text-teal-400">
+            <img src="/logo.svg" alt="Opsvantage Logo" className="w-12 h-12" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-white font-bold text-xl tracking-tight leading-tight">BUILD WITH AI</span>
+            <span className="text-teal-500 text-[10px] tracking-tight font-semibold uppercase">Enterprise</span>
+          </div>
+        </Link>
+
+        {/* Desktop Links Container */}
+        <div className="hidden xl:flex items-center gap-6 text-sm font-medium text-neutral-300">
+          {PRIMARY_NAV_LINKS.slice(0, 1).map((link) => (
+            <Link key={link.href} href={link.href} className="hover:text-teal-400 transition-colors">{link.label}</Link>
+          ))}
+          {/* Dropdown 1: Products */}
+          <div className="relative group py-8">
+            <button className="hover:text-teal-400 transition-colors flex items-center gap-1">Products <span className="text-[10px]">&#9660;</span></button>
+            <div className="absolute top-20 left-0 w-56 bg-[#0a0a0a] border border-neutral-800 rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden flex flex-col">
+              {PRODUCT_LINKS.map((link, index) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={[
+                    'px-4 py-3 hover:text-teal-400',
+                    index < PRODUCT_LINKS.length - 1 ? 'border-b border-neutral-800/50' : '',
+                    link.emphasize
+                      ? 'hover:bg-teal-500/10 border-teal-500/30 flex items-center gap-2 text-teal-400 font-bold'
+                      : 'hover:bg-neutral-900',
+                  ].join(' ').trim()}
+                >
+                  {link.emphasize ? <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse shrink-0" /> : null}
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Dropdown 2: Services */}
+          <div className="relative group py-8">
+            <Link href="/services" className="hover:text-teal-400 transition-colors flex items-center gap-1">Services <span className="text-[10px]">&#9660;</span></Link>
+            <div className="absolute top-20 left-0 w-48 bg-[#0a0a0a] border border-neutral-800 rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden flex flex-col">
+              {SERVICE_LINKS.map((link, index) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={[
+                    'px-4 py-3 hover:bg-neutral-900 hover:text-teal-400',
+                    index < SERVICE_LINKS.length - 1 ? 'border-b border-neutral-800/50' : '',
+                  ].join(' ').trim()}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+          {/* Dropdown 3: Protocol */}
+          <div className="relative group py-8">
+            <button className="hover:text-teal-400 transition-colors flex items-center gap-1">Protocol <span className="text-[10px]">&#9660;</span></button>
+            <div className="absolute top-20 left-0 w-48 bg-[#0a0a0a] border border-neutral-800 rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden flex flex-col">
+              {PROTOCOL_LINKS.map((link, index) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={[
+                    'px-4 py-3 hover:bg-neutral-900 hover:text-teal-400',
+                    index < PROTOCOL_LINKS.length - 1 ? 'border-b border-neutral-800/50' : '',
+                  ].join(' ').trim()}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <Link href={PRIMARY_NAV_LINKS[1].href} className="hover:text-teal-400 transition-colors flex items-center gap-1">
+            
+            {PRIMARY_NAV_LINKS[1].label}
+          </Link>
+          <Link href={PRIMARY_NAV_LINKS[2].href} className="hover:text-teal-400 transition-colors">{PRIMARY_NAV_LINKS[2].label}</Link>
+        </div>
+
+        {/* Right Actions & Theme Toggle */}
+          <div className="flex items-center gap-4">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggle}
+              className="p-2 rounded-lg hover:bg-neutral-800/50 transition-colors focus:outline-none"
+              title="Toggle theme"
+              aria-label="Toggle Theme"
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-5 h-5 text-neutral-300" />
+              ) : (
+                <Moon className="w-5 h-5 text-neutral-300" />
+              )}
+            </button>
+          </div>
+
+          {/* Smart Wallet Connect Button */}{/* Smart Wallet Connect Button */}
+        <div className="hidden lg:block">
+          <DeferredNavbarWallet />
+        </div>
+      </div>
+
+      {/* Mobile Menu Dropdown */}
+      {isMobileOpen && (
+        <div className="xl:hidden bg-[color:var(--bg-primary)] border-b border-[color:var(--bg-tertiary)] px-4 py-4 flex flex-col gap-4 text-sm z-50">
+          {MOBILE_NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={link.emphasize ? 'text-teal-400 font-bold flex items-center gap-1.5' : 'text-neutral-300 hover:text-teal-400'}
+            >
+              {link.emphasize ? <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" /> : null}
+              {link.label}
+            </Link>
+          ))}
+          <hr className="border-neutral-800" />
+          <Link href={BOOK_APPOINTMENT_LINK.href} className="border border-teal-500 text-teal-400 font-bold py-2 rounded-lg w-full text-center">Book an Appointment</Link>
+          <Link href="/login" className="text-neutral-300 hover:text-teal-400 text-center py-2">Login</Link>
+          <Link href="/signup" className="bg-teal-500 text-neutral-950 font-bold py-2 rounded-lg w-full text-center">Sign Up</Link>
+        </div>
+      )}
+    </nav>
+  );
+}

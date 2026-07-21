@@ -1,0 +1,8 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = true
+	autocrlf = false
+[user]
+	name = Agent Zero Time Travel
+	email = time-travel@agent-zero.local

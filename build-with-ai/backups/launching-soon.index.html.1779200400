@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Build With AI — Launching Soon</title>
+  <meta name="description" content="Sovereign AI-native infrastructure for enterprise dev teams." />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    :root{--bg:#071029;--accent:#06b6d4;--muted:#94a3b8;--glass:rgba(255,255,255,0.04)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:#fff;background:linear-gradient(180deg,#071029 0%, #071a2a 60%)}
+    header{display:flex;align-items:center;justify-content:space-between;padding:18px 36px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand img{height:36px}
+    nav a{color:#cbd5e1;margin:0 10px;text-decoration:none}
+    .primary{background:var(--accent);color:#042027;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:700}
+    main{padding:48px;display:flex;justify-content:center}
+    .container{width:100%;max-width:1200px;display:grid;grid-template-columns:1fr 420px;gap:40px;align-items:center}
+    .panel{background:rgba(255,255,255,0.03);padding:28px;border-radius:12px}
+    footer{padding:28px 36px;color:#94a3b8;display:flex;justify-content:space-between;align-items:center}
+    .links a{color:#94a3b8;margin-right:12px;text-decoration:none}
+    .legal-dropdown{position:relative;display:inline-block}
+    .legal-dropdown .menu{display:none;position:absolute;right:0;background:#071029;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px}
+    .legal-dropdown:hover .menu{display:block}
+    @media (max-width:900px){ .container{grid-template-columns:1fr;gap:20px} }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <img src="/assets/logo.svg" alt="Build With AI logo" />
+      <div style="font-weight:700">BUILD WITH AI</div>
+    </div>
+
+    <nav aria-label="Main navigation">
+      <a href="/about-us">About Us</a>
+      <a href="/alpha-signup">Alpha Signup</a>
+      <a href="/promotions">Promotions</a>
+
+      <span class="legal-dropdown" aria-haspopup="true" aria-expanded="false">
+        <a href="/legal/privacy">Legal</a>
+        <div class="menu" role="menu" aria-hidden="true">
+          <a role="menuitem" href="/legal/privacy">Privacy Policy</a><br/>
+          <a role="menuitem" href="/legal/terms">Terms &amp; Conditions</a>
+        </div>
+      </span>
+
+      <a href="/contact">Contact Us</a>
+      <a class="primary" href="/request-demo">Request A Demo</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container">
+      <section>
+        <h1 style="font-size:clamp(28px,5vw,48px);margin:0 0 12px">Sovereign AI Infrastructure for Enterprise Dev Teams</h1>
+        <p style="color:#94a3b8;margin:0 0 20px">Ship AI-native features faster with built-in on-chain identity, enterprise governance, and gasless operations. Trusted by private beta partners.</p>
+
+        <div style="display:flex;gap:12px;margin-bottom:18px">
+          <a class="primary" href="/request-demo">Request A Demo</a>
+          <a style="border:1px solid rgba(255,255,255,0.08);padding:10px 14px;border-radius:8px;color:#cbd5e1;text-decoration:none" href="#waitlist">Join Waitlist</a>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:18px">
+          <div style="flex:1;padding:14px;border-radius:10px;background:rgba(255,255,255,0.02)">
+            <h4 style="margin:0 0 6px">Enterprise Security</h4>
+            <div style="color:#94a3b8">Zero vendor lock-in, RBAC, and auditable on-chain trails.</div>
+          </div>
+          <div style="flex:1;padding:14px;border-radius:10px;background:rgba(255,255,255,0.02)">
+            <h4 style="margin:0 0 6px">Developer Velocity</h4>
+            <div style="color:#94a3b8">Prebuilt AI workflows, SDKs, and CI for model ops.</div>
+          </div>
+          <div style="flex:1;padding:14px;border-radius:10px;background:rgba(255,255,255,0.02)">
+            <h4 style="margin:0 0 6px">Operational Scale</h4>
+            <div style="color:#94a3b8">Policy enforcement, observability, and governance at scale.</div>
+          </div>
+        </div>
+
+        <div style="margin-top:22px;color:#94a3b8">Private beta with enterprise teams — request a demo to see the roadmap.</div>
+      </section>
+
+      <aside class="panel" id="waitlist" aria-labelledby="waitlist-title">
+        <h2 id="waitlist-title" style="margin:0 0 12px">Get Early Access</h2>
+        <form id="waitlistForm" onsubmit="return submitForm(event)">
+          <input id="email" type="email" placeholder="work@company.com" required style="width:100%;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff;margin-bottom:12px" />
+          <select id="companySize" style="width:100%;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff;margin-bottom:12px">
+            <option value="">Company size</option>
+            <option value="1-50">1–50</option>
+            <option value="51-250">51–250</option>
+            <option value="251-1000">251–1000</option>
+            <option value="1000+">1000+</option>
+          </select>
+          <button type="submit" style="width:100%;padding:12px;border-radius:8px;border:none;background:var(--accent);color:#042027;font-weight:700">Join Waitlist</button>
+        </form>
+        <div id="msg" style="color:#94a3b8;margin-top:12px">We’ll only email launch updates. No spam. Early access prioritized by company fit.</div>
+      </aside>
+    </div>
+  </main>
+
+  <footer>
+    <div>&copy; Build With AI — <span id="year"></span></div>
+    <div class="links">
+      <a href="/about-us">About Us</a>
+      <a href="/alpha-signup">Alpha Signup</a>
+      <a href="/promotions">Promotions</a>
+      <a href="/contact">Contact Us</a>
+      <a href="/legal/privacy">Privacy</a>
+      <a href="/legal/terms">Terms</a>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    async function submitForm(e){
+      e && e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const size = document.getElementById('companySize').value;
+      const msg = document.getElementById('msg');
+      if(!email){ msg.textContent='Please enter a valid work email.'; return false; }
+      msg.textContent='Saving...';
+      try {
+        const res = await fetch('/api/launching-soon/subscribe', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ email, companySize: size })
+        });
+        const j = await res.json();
+        if(j.ok){ msg.textContent='Thanks — we’ll be in touch with early access details.'; document.getElementById('email').value=''; }
+        else msg.textContent='Could not save email. Try again.';
+      } catch(err){ msg.textContent='Network error. Try again later.'; }
+      return false;
+    }
+  </script>
+</body>
+</html>

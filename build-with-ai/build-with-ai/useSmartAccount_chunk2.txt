@@ -1,0 +1,36 @@
+  useEffect(() => {
+    const existingSession = getSmartAccountSession();
+    if (existingSession) {
+      setSession(existingSession);
+      setSmartAccountAddress(existingSession.address);
+      setIsConnected(existingSession.isLoggedIn);
+    }
+  }, []);
+
+  const connectSmartAccount = useCallback(async () => {
+    if (!isAlchemyConfigured()) {
+      setError('Alchemy not configured.');
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const walletAddress = 'REDACTED_SECRET';
+      const { getSmartAccountAddress } = await import('@/lib/smart-account-bridge');
+      const smartAccountAddr = await getSmartAccountAddress(walletAddress);
+      const newSession: SmartAccountSession = {
+        address: smartAccountAddr,
+        ownerAddress: walletAddress,
+        isLoggedIn: true,
+        loginMethod: 'privy-wallet',
+        expiresAt: Date.now() + 86400000,
+      };
+      saveSmartAccountSession(newSession);
+      setSession(newSession);
+      setSmartAccountAddress(smartAccountAddr);
+      setIsConnected(true);
+    } catch (err: any) {
+      setError(err?.message || 'Error');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);

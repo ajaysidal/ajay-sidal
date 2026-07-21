@@ -1,0 +1,205 @@
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: o include that instruction in the subagent query when relevant.","when":"config.github.copilot.chat.executionSubagent.enabled","inputSchema":{"type":"object","properties":{"query":{"type":"string","description":"What to
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: ils: 2-3 sentences detailing the objective of the search agent.","when":"config.github.copilot.chat.searchSubagent.enabled && config.github.copilot.chat.exploreAgent.enabled","tags":["vscode_codesearch"],"inputSchema":{
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: rch agent.","when":"config.github.copilot.chat.searchSubagent.enabled && config.github.copilot.chat.exploreAgent.enabled","tags":["vscode_codesearch"],"inputSchema":{"type":"object","properties":{"query":{"type":"string
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: ils: 2-3 sentences detailing the objective of the search agent.","when":"config.github.copilot.chat.searchSubagent.enabled && !config.github.copilot.chat.exploreAgent.enabled","tags":["vscode_codesearch"],"inputSchema":
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: ch agent.","when":"config.github.copilot.chat.searchSubagent.enabled && !config.github.copilot.chat.exploreAgent.enabled","tags":["vscode_codesearch"],"inputSchema":{"type":"object","properties":{"query":{"type":"string
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: ot use this tool for built-in commands such as /help or /clear.","when":"config.github.copilot.chat.skillTool.enabled","inputSchema":{"type":"object","properties":{"skill":{"type":"string","description":"The skill name.
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: %","userDescription":"%copilot.tools.viewImage.userDescription%","when":"config.github.copilot.chat.tools.viewImage.enabled","modelDescription":"View the contents of an image file. Use this instead of read_file for supp
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet:  use run_in_terminal to run git commands in a terminal as well.","when":"config.github.copilot.chat.getChangedFilesTool.enabled","tags":["vscode_codesearch"],"inputSchema":{"type":"object","properties":{"repositoryPath"
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: ion":"%github.copilot.tools.createNewWorkspace.userDescription%","when":"config.github.copilot.chat.newWorkspaceCreation.enabled","modelDescription":"Get comprehensive setup steps to help the user create complete projec
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: _installExtension","displayName":"Install Extension in VS Code","when":"!config.github.copilot.chat.installExtensionSkill.enabled","toolReferenceName":"installExtension","legacyToolReferenceFullNames":["new/installExten
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: or ...existing code... comments in the oldString or newString.","when":"!config.github.copilot.chat.disableReplaceTool","inputSchema":{"type":"object","properties":{"filePath":{"type":"string","description":"An absolute
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: ol will provide a summary of successful and failed operations.","when":"!config.github.copilot.chat.disableReplaceTool","inputSchema":{"type":"object","properties":{"explanation":{"type":"string","description":"A brief 
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: hub.copilot.tools.githubRepo.userDescription%","icon":"$(repo)","when":"!config.github.copilot.chat.githubMcpServer.enabled","inputSchema":{"type":"object","properties":{"repo":{"type":"string","description":"The name o
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet:  gave explicit step-by-step instructions → follow them directly","when":"config.github.copilot.chat.switchAgent.enabled","icon":"$(arrow-swap)","inputSchema":{"type":"object","properties":{"agentName":{"type":"string","
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: on%","sampleRequest":"%copilot.vscode.setupTests.sampleRequest%","when":"config.github.copilot.chat.setupTests.enabled","disambiguation":[{"category":"set_up_tests","description":"The user wants to configure project tes
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: ror","description":"Make a model request which will result in an error","when":"github.copilot.chat.debug"},{"name":"compact","description":"%copilot.agent.compact.description%"},{"name":"explain","description":"%copilo
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: on%","sampleRequest":"%copilot.vscode.setupTests.sampleRequest%","when":"config.github.copilot.chat.setupTests.enabled","disambiguation":[{"category":"set_up_tests","description":"The user wants to configure project tes
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: hasByokModels
+  snippet: "when":"github.copilot.interactiveSession.individual.expired && !github.copilot.hasByokModels"},{"icon":"$(chat-sparkle)","title":"%copilot.title%","content":"%github.copilot.viewsWelcome.enterprise%","when":"gith
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: hasByokModels
+  snippet: when":"github.copilot.interactiveSession.enterprise.disabled && !github.copilot.hasByokModels"},{"icon":"$(chat-sparkle)","title":"%copilot.title%","content":"%github.copilot.viewsWelcome.offline%","when":"github.
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: hasByokModels
+  snippet: opilot.viewsWelcome.offline%","when":"github.copilot.offline && !github.copilot.hasByokModels"},{"icon":"$(chat-sparkle)","title":"%copilot.title%","content":"%github.copilot.viewsWelcome.invalidToken%","when":"gi
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: hasByokModels
+  snippet: ken%","when":"github.copilot.interactiveSession.invalidToken && !github.copilot.hasByokModels"},{"icon":"$(chat-sparkle)","title":"%copilot.title%","content":"%github.copilot.viewsWelcome.rateLimited%","when":"git
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: hasByokModels
+  snippet: ited%","when":"github.copilot.interactiveSession.rateLimited && !github.copilot.hasByokModels"},{"icon":"$(chat-sparkle)","title":"%copilot.title%","content":"%github.copilot.viewsWelcome.gitHubLoginFailed%","when
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: hasByokModels
+  snippet: ,"when":"github.copilot.interactiveSession.gitHubLoginFailed && !github.copilot.hasByokModels"},{"icon":"$(chat-sparkle)","title":"%copilot.title%","content":"%github.copilot.viewsWelcome.contactSupport%","when":"
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: hasByokModels
+  snippet: t%","when":"github.copilot.interactiveSession.contactSupport && !github.copilot.hasByokModels"},{"icon":"$(chat-sparkle)","title":"%copilot.title%","content":"%github.copilot.viewsWelcome.chatDisabled%","when":"gi
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: hasByokModels
+  snippet: led%","when":"github.copilot.interactiveSession.chatDisabled && !github.copilot.hasByokModels"},{"icon":"$(chat-sparkle)","title":"%copilot.title%","content":"%github.copilot.viewsWelcome.switchToReleaseChannel%",
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: ub.copilot.interactiveSession.switchToReleaseChannel"}],"commands":[{"command":"github.copilot.chat.triggerPermissiveSignIn","title":"%github.copilot.command.triggerPermissiveSignIn%"},{"command":"copilot.claude.agents"
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: i.openInCopilotCLI%","icon":"$(terminal)","category":"Copilot CLI"},{"command":"github.copilot.chat.compact","title":"%github.copilot.command.compactConversation%"},{"command":"github.copilot.chat.explain","title":"%git
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: at.compact","title":"%github.copilot.command.compactConversation%"},{"command":"github.copilot.chat.explain","title":"%github.copilot.command.explainThis%","enablement":"!github.copilot.interactiveSession.disabled","cat
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: t":"!github.copilot.interactiveSession.disabled","category":"Chat"},{"command":"github.copilot.chat.explain.palette","title":"%github.copilot.command.explainThis%","enablement":"!github.copilot.interactiveSession.disabl
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: .interactiveSession.disabled && !editorReadonly","category":"Chat"},{"command":"github.copilot.chat.review","title":"%github.copilot.command.reviewAndComment%","enablement":"config.github.copilot.chat.reviewSelection.en
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: eview","title":"%github.copilot.command.reviewAndComment%","enablement":"config.github.copilot.chat.reviewSelection.enabled && !github.copilot.interactiveSession.disabled","category":"Chat"},{"command":"github.copilot.c
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet:  && !github.copilot.interactiveSession.disabled","category":"Chat"},{"command":"github.copilot.chat.review.apply","title":"%github.copilot.command.applyReviewSuggestion%","icon":"$(sparkle)","enablement":"commentThread 
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: ,"enablement":"commentThread =~ /hasSuggestion/","category":"Chat"},{"command":"github.copilot.chat.review.applyAndNext","title":"%github.copilot.command.applyReviewSuggestionAndNext%","icon":"$(sparkle)","enablement":"
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: ,"enablement":"commentThread =~ /hasSuggestion/","category":"Chat"},{"command":"github.copilot.chat.review.discard","title":"%github.copilot.command.discardReviewSuggestion%","icon":"$(close)","category":"Chat"},{"comma
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: mand.discardReviewSuggestion%","icon":"$(close)","category":"Chat"},{"command":"github.copilot.chat.review.discardAndNext","title":"%github.copilot.command.discardReviewSuggestionAndNext%","icon":"$(close)","category":"
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: scardReviewSuggestionAndNext%","icon":"$(close)","category":"Chat"},{"command":"github.copilot.chat.review.discardAll","title":"%github.copilot.command.discardAllReviewSuggestion%","icon":"$(close-all)","category":"Chat
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: scardAllReviewSuggestion%","icon":"$(close-all)","category":"Chat"},{"command":"github.copilot.chat.review.stagedChanges","title":"%github.copilot.command.reviewStagedChanges%","icon":"$(code-review)","enablement":"gith
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: hub.copilot.command.reviewStagedChanges%","icon":"$(code-review)","enablement":"github.copilot.chat.reviewDiff.enabled && !github.copilot.interactiveSession.disabled","category":"Chat"},{"command":"github.copilot.chat.r
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet:  && !github.copilot.interactiveSession.disabled","category":"Chat"},{"command":"github.copilot.chat.review.unstagedChanges","title":"%github.copilot.command.reviewUnstagedChanges%","icon":"$(code-review)","enablement":"
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: b.copilot.command.reviewUnstagedChanges%","icon":"$(code-review)","enablement":"github.copilot.chat.reviewDiff.enabled && !github.copilot.interactiveSession.disabled","category":"Chat"},{"command":"github.copilot.chat.r
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet:  && !github.copilot.interactiveSession.disabled","category":"Chat"},{"command":"github.copilot.chat.review.changes","title":"%github.copilot.command.reviewChanges%","icon":"$(code-review)","enablement":"github.copilot.c
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: :"%github.copilot.command.reviewChanges%","icon":"$(code-review)","enablement":"github.copilot.chat.reviewDiff.enabled && !github.copilot.interactiveSession.disabled","category":"Chat"},{"command":"github.copilot.chat.r
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet:  && !github.copilot.interactiveSession.disabled","category":"Chat"},{"command":"github.copilot.chat.review.stagedFileChange","title":"%github.copilot.command.reviewFileChange%","icon":"$(code-review)","enablement":"gith
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: github.copilot.command.reviewFileChange%","icon":"$(code-review)","enablement":"github.copilot.chat.reviewDiff.enabled && !github.copilot.interactiveSession.disabled","category":"Chat"},{"command":"github.copilot.chat.r
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet:  && !github.copilot.interactiveSession.disabled","category":"Chat"},{"command":"github.copilot.chat.review.unstagedFileChange","title":"%github.copilot.command.reviewFileChange%","icon":"$(code-review)","enablement":"gi
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: github.copilot.command.reviewFileChange%","icon":"$(code-review)","enablement":"github.copilot.chat.reviewDiff.enabled && !github.copilot.interactiveSession.disabled","category":"Chat"},{"command":"github.copilot.chat.c
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet:  && !github.copilot.interactiveSession.disabled","category":"Chat"},{"command":"github.copilot.chat.codeReview.run","title":"%github.copilot.command.codeReviewRun%","enablement":"github.copilot.chat.reviewDiff.enabled &
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: .codeReview.run","title":"%github.copilot.command.codeReviewRun%","enablement":"github.copilot.chat.reviewDiff.enabled && !github.copilot.interactiveSession.disabled","category":"Chat"},{"command":"github.copilot.chat.r
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet:  && !github.copilot.interactiveSession.disabled","category":"Chat"},{"command":"github.copilot.chat.review.previous","title":"%github.copilot.command.gotoPreviousReviewSuggestion%","icon":"$(arrow-up)","category":"Chat"
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: oPreviousReviewSuggestion%","icon":"$(arrow-up)","category":"Chat"},{"command":"github.copilot.chat.review.next","title":"%github.copilot.command.gotoNextReviewSuggestion%","icon":"$(arrow-down)","category":"Chat"},{"co
+
+FILE C:\Users\AjaySidal\AppData\Local\Programs\Microsoft VS Code\8a7abeba6e\resources\app\extensions\copilot\package.json
+  match: github.copilot.chat
+  snippet: otoNextReviewSuggestion%","icon":"$(arrow-down)","category":"Chat"},{"command":"github.copilot.chat.review.continueInInlineChat","title":"%github.copilot.command.continueReviewInInlineChat%","icon":"$(comment-discussion
+
+... truncated ...

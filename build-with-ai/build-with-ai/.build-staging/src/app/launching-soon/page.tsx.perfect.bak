@@ -1,0 +1,49 @@
+import { Metadata } from 'next'
+import LaunchingSoonClient from '@/components/launching-soon/LaunchingSoonClient'
+
+export const metadata: Metadata = {
+  title: 'Launching Soon | Build With AI Enterprise',
+  description: 'AI-native infrastructure for the next generation of on-chain operations. Early access opening 19 May 2026.',
+}
+
+export default function LaunchingSoon() {
+  return (
+    <main className="min-h-screen flex flex-col items-center justify-start bg-[#0A0F1A] px-4 pt-4 pb-20 text-center relative overflow-hidden selection:bg-cyan-500/30">
+      {/* Background: Sovereign Dark */}
+      <div className="absolute inset-0 bg-[#0A0F1A] pointer-events-none" />
+      
+      <div className="relative z-10 max-w-6xl w-full space-y-12 mt-4">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] antialiased mb-8 normal-case">
+          <span className='block whitespace-nowrap mb-2'>
+            <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              The Future Of AI-Native
+            </span>
+          </span>
+          <span className='block whitespace-nowrap'>
+            <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              Infrastructure Is
+            </span>
+            <span className="text-white"> Coming.</span>
+          </span>
+        </h1>
+
+        <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed antialiased">
+          Sovereign architecture. Zero dependency. Enterprise-grade security.
+          We’re engineering a new standard for on-chain operations, identity, and autonomous tooling.
+        </p>
+
+        <LaunchingSoonClient />
+
+        <div className="flex flex-col items-center gap-6 pt-8 border-t border-neutral-800/50">
+          <div className="flex gap-6">
+            <a href="#" className="text-neutral-500 hover:text-cyan-400 transition-colors text-sm tracking-wide">X</a>
+            <a href="#" className="text-neutral-500 hover:text-cyan-400 transition-colors text-sm tracking-wide">Telegram</a>
+            <a href="#" className="text-neutral-500 hover:text-cyan-400 transition-colors text-sm tracking-wide">Discord</a>
+            <a href="#" className="text-neutral-500 hover:text-cyan-400 transition-colors text-sm tracking-wide">LinkedIn</a>
+          </div>
+          <a href="/leads" className="text-sm text-neutral-600 hover:text-cyan-400 transition-colors tracking-wide">Contact Us</a>
+        </div>
+      </div>
+    </main>
+  )
+}

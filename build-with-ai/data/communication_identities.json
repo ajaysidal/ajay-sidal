@@ -1,0 +1,32 @@
+[
+  {
+    "address": "ajay@buildwithai.digital",
+    "label": "Founder",
+    "purpose": "Founder outreach and high-trust replies",
+    "status": "live"
+  },
+  {
+    "address": "investors@buildwithai.digital",
+    "label": "Investor Desk",
+    "purpose": "Investor briefs, diligence, and follow-up",
+    "status": "live"
+  },
+  {
+    "address": "hello@buildwithai.digital",
+    "label": "Inbound Sales",
+    "purpose": "Sales and customer conversation intake",
+    "status": "live"
+  },
+  {
+    "address": "calendar@buildwithai.digital",
+    "label": "Calendar Ops",
+    "purpose": "Meeting coordination and scheduling",
+    "status": "live"
+  },
+  {
+    "address": "ops@buildwithai.digital",
+    "label": "Automation Ops",
+    "purpose": "Workflow notifications and automation summaries",
+    "status": "live"
+  }
+]

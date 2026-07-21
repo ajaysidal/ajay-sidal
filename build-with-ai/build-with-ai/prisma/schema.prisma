@@ -1,0 +1,237 @@
+// This is your Prisma schema file.
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+//
+// MARZ Sanctuary Schema - OpenFort Native Authentication
+// User IDs are OpenFort DIDs (e.g., did:openfort:cl...)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Note: next-auth Account and Session models removed
+// Authentication is now handled by OpenFort with embedded wallets
+// See: src/lib/openfort.ts for server-side verification
+
+model User {
+  @@map("users")
+  id              String    @id // OpenFort DID (e.g., did:openfort:cl...)
+  name            String?
+  email           String?   @unique
+  emailVerified   Boolean   @default(false) // Verified via OpenFort
+  image           String?
+  role            String    @default("user") // e.g., 'user', 'admin'
+  credits         Int       @default(0) // Credits in cents (USDC/USD equivalent)
+  creditsFrozen   Int       @default(0) // Credits frozen during disputes
+  stripeCustomerId String?  @unique
+  walletAddress   String?   @unique // Polygon wallet address from OpenFort
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  legacyUserId    String?   @unique @map("user_id")
+  legacySubscriptionTier String? @map("subscription_tier")
+  legacyRenewalDate DateTime? @map("renewal_date") @db.Timestamptz(6)
+  legacyCreatedAt DateTime? @map("created_at") @db.Timestamptz(6)
+  legacyUpdatedAt DateTime? @map("updated_at") @db.Timestamptz(6)
+  orders          Order[]
+  transactions    Transaction[]
+
+  @@index([email])
+  @@index([role])
+  @@index([walletAddress])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// New Order models
+model Order {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  stripeId    String      @unique // Stripe Checkout Session ID
+  amountTotal Int
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  items       OrderItem[]
+
+  // Fields for shipping physical products
+  shippingStatus   String? // e.g., 'none', 'processing', 'shipped', 'delivered'
+  trackingProvider String? // e.g., 'UPS', 'FedEx'
+  trackingNumber   String?
+
+  // Fields for returns
+  returnStatus      String? // e.g., 'requested', 'approved', 'rejected', 'completed'
+  returnReason      String?
+  returnRequestedAt DateTime?
+  returnLabelUrl    String? // URL to the generated return label
+
+  @@index([userId])
+  @@index([stripeId])
+  @@index([createdAt])
+  @@index([shippingStatus])
+  @@index([returnStatus])
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  order     Order  @relation(fields: [orderId], references: [id])
+  name      String
+  quantity  Int
+  price     Int // Price in cents
+
+  @@index([orderId])
+}
+
+// Leads models for the enterprise leads generator
+model Lead {
+  id          String   @id @default(cuid())
+  company     String
+  website     String?  
+  domain      String?  @unique
+  industry    String?
+  employees   Int?
+  revenue     String?
+  country     String?
+  region      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  enrichments LeadEnrichment[]
+
+  @@index([company])
+  @@index([domain])
+}
+
+model LeadEnrichment {
+  id        String   @id @default(cuid())
+  leadId    String
+  provider  String
+  data      Json
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+  @@index([provider])
+}
+
+model LeadJob {
+  id        String   @id @default(cuid())
+  userId    String?
+  status    String   @default("pending")
+  params    Json
+  result    Json?
+  enqueuedAt DateTime @default(now())
+  completedAt DateTime?
+
+  @@index([userId])
+  @@index([status])
+}
+
+// Monetization models
+model Transaction {
+  id              String   @id @default(cuid())
+  userId          String
+  amount          Int      // Amount in cents (USD) or smallest unit (USDC)
+  currency        String   // USD, USDC, MATIC
+  provider        String   // stripe, polygon
+  status          String   // pending, completed, disputed, refunded, failed
+  txHash          String?  @unique // For crypto transactions
+  stripePaymentIntentId String? @unique // For Stripe payments
+  stripeDisputeId String?  @unique // If disputed
+  description     String?  // What was purchased
+  metadata        Json?    // Additional data
+  creditsGranted  Int      @default(0) // Credits added to user account
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  disputedAt      DateTime?
+  resolvedAt      DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([txHash])
+  @@index([stripePaymentIntentId])
+}
+
+// WebhookEvent - Track processed webhooks for idempotency
+// Prevents duplicate webhook processing from Stripe/Alchemy retries
+model WebhookEvent {
+  id          String   @id @default(cuid())
+  webhookId   String   @unique // Stripe: event.id, Alchemy: x-alchemy-webhook-id
+  provider    String   // 'stripe' or 'alchemy'
+  eventType   String   // 'payment_intent.succeeded', 'MINED_TRANSACTION', etc.
+  processedAt DateTime @default(now())
+  metadata    Json? // Optional: store webhook details for audit
+
+  @@index([webhookId])
+  @@index([provider])
+  @@index([eventType])
+  @@index([processedAt])
+}
+
+// Legacy tables retained in production database for historical/backfill use.
+model DomainSearch {
+  id          String   @id
+  domainName  String
+  isAvailable Boolean
+  searchedAt  DateTime @default(now())
+
+  @@index([domainName])
+}
+
+model SiteContent {
+  id        String   @id
+  key       String   @unique
+  value     String
+  updatedAt DateTime
+}
+
+model AlphaSignup {
+  email     String   @id
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  partnerId String?  @map("partner_id")
+  userAgent String?  @map("user_agent")
+
+  @@map("alpha_signups")
+}
+
+model MarzIdentity {
+  id              String   @id
+  identityName    String   @unique @map("identity_name")
+  ownerHandle     String?  @map("owner_handle")
+  gasSponsoredUsd Decimal  @default(0) @map("gas_sponsored_usd") @db.Decimal(12, 2)
+  status          String   @default("minted")
+  txRef           String?  @map("tx_ref")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("marz_identities")
+}
+
+model TldPromo {
+  tld            String   @id
+  isHot          Boolean  @default(false) @map("is_hot")
+  resellerAmount Decimal? @map("reseller_amount") @db.Decimal
+  currency       String?
+  updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("tld_promos")
+}
+model LaunchingSoonSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}

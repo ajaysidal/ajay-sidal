@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  test:
+    name: Test and Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npx eslint . --max-warnings=0
+
+      - name: Run unit tests (with coverage)
+        run: npm test -- --coverage
+
+      - name: Build application
+        run: npm run build
+
+      - name: Start server for E2E tests
+        run: |
+          # Start Next.js production server in background
+          SKIP_HTTPS_REDIRECT=1 npm run start &
+          # Wait for server to be ready (up to 60 seconds)
+          n=0; until curl -sSf http://localhost:3000 >/dev/null 2>&1 || [ $n -ge 60 ]; do
+            echo "Waiting for server to start... ($n/60)"
+            n=$((n+1))
+            sleep 1
+          done
+          # Verify server is running
+          curl -sSf http://localhost:3000 || (echo "Server failed to start" && exit 1)
+          echo "Server is running on http://localhost:3000"
+
+      - name: Run E2E tests
+        run: BASE_URL=http://localhost:3000 npm run test:e2e
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitest-coverage
+          path: coverage
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30

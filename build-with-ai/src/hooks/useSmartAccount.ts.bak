@@ -1,0 +1,133 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import { useOpenfort } from '@openfort/react';
+import { 
+  SmartAccountSession, 
+  saveSmartAccountSession, 
+  getSmartAccountSession, 
+  clearSmartAccountSession,
+  isAlchemyConfigured 
+} from '@/lib/smart-account-bridge';
+
+/**
+ * Hook to manage Smart Account connection via OpenFort
+ * Provides gasless transaction capabilities
+ */
+export function useSmartAccount() {
+  const { authenticated, user } = useOpenfort();
+  
+  const [isConnected, setIsConnected] = useState(false);
+  const [smartAccountAddress, setSmartAccountAddress] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [session, setSession] = useState<SmartAccountSession | null>(null);
+
+  // Check for existing session on mount
+  useEffect(() => {
+    const existingSession = getSmartAccountSession();
+    if (existingSession) {
+      setSession(existingSession);
+      setSmartAccountAddress(existingSession.address);
+      setIsConnected(existingSession.isLoggedIn);
+    }
+  }, []);
+
+  /**
+   * Connect OpenFort wallet to Alchemy Smart Account
+   */
+  const connectSmartAccount = useCallback(async () => {
+    if (!authenticated) {
+      setError('Not authenticated. Please login first.');
+      return;
+    }
+
+    if (!isAlchemyConfigured()) {
+      setError('Alchemy not configured. Set ALCHEMY_API_KEY in environment.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Get user's wallets from OpenFort
+      const wallets = user?.linkedAccounts || [];
+      
+      // Find an EOA wallet (embedded or connected)
+      const eoaWallet = wallets.find((w: any) => w.type === 'wallet' || w.type === 'email');
+      
+      if (!eoaWallet) {
+        throw new Error('No wallet found. Please login with email or connect a wallet.');
+      }
+
+      // For now, we'll use the wallet address directly
+      // Full implementation would require OpenFort's embedded wallet signer
+      const walletAddress = 'address' in eoaWallet ? eoaWallet.address : null;
+      
+      if (!walletAddress) {
+        throw new Error('Could not get wallet address');
+      }
+
+      // Get Smart Account address (deterministic)
+      const { getSmartAccountAddress } = await import('@/lib/smart-account-bridge');
+      const smartAccountAddr = await getSmartAccountAddress(walletAddress);
+
+      // Create session
+      const newSession: SmartAccountSession = {
+        address: smartAccountAddr,
+        ownerAddress: walletAddress,
+        isLoggedIn: true,
+        loginMethod: user?.linkedAccounts?.some((a: any) => a.type === 'google_oauth') 
+          ? 'openfort-google' 
+          : user?.linkedAccounts?.some((a: any) => a.type === 'email') 
+            ? 'openfort-email' 
+            : 'openfort-wallet',
+        expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000), // 30 days
+      };
+
+      // Save session
+      saveSmartAccountSession(newSession);
+      setSession(newSession);
+      setSmartAccountAddress(smartAccountAddr);
+      setIsConnected(true);
+
+      console.log('✅ Smart Account connected:', smartAccountAddr);
+    } catch (err) {
+      console.error('Failed to connect Smart Account:', err);
+      setError(err instanceof Error ? err.message : 'Failed to connect Smart Account');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [authenticated, user]);
+
+  /**
+   * Disconnect Smart Account
+   */
+  const disconnectSmartAccount = useCallback(() => {
+    clearSmartAccountSession();
+    setSession(null);
+    setSmartAccountAddress(null);
+    setIsConnected(false);
+    console.log('🔌 Smart Account disconnected');
+  }, []);
+
+  /**
+   * Check if gas sponsorship is available
+   */
+  const isGasSponsorshipAvailable = !!process.env.NEXT_PUBLIC_ALCHEMY_POLICY_ID;
+
+  return {
+    isConnected,
+    smartAccountAddress,
+    isLoading,
+    error,
+    session,
+    connectSmartAccount,
+    disconnectSmartAccount,
+    isGasSponsorshipAvailable,
+    ownerAddress: session?.ownerAddress || null,
+    loginMethod: session?.loginMethod,
+    isAlchemyConfigured: isAlchemyConfigured(),
+  };
+}

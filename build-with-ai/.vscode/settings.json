@@ -1,0 +1,9 @@
+{
+  "ollama.endpoint": "http://127.0.0.1:11434",
+  "ollama.models": [
+    "qwen2.5-coder-16k:latest"
+  ],
+  "chat.agent.sandbox.advanced.runtime": {
+    "enableWeakerNestedSandbox": false
+  }
+}

@@ -1,0 +1,87 @@
+networks:
+  atlas_net:
+    driver: bridge
+services:
+  postgres:
+    image: ankane/pgvector:v0.5.1
+    container_name: atlas_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=atlas
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=atlas_memory
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - atlas_net
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U atlas -d atlas_memory
+      interval: 5s
+      retries: 5
+  neo4j:
+    image: neo4j:5
+    container_name: atlas_neo4j
+    restart: unless-stopped
+    environment:
+      - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD}
+      - NEO4J_PLUGINS=["apoc"]
+    volumes:
+      - ./neo4j_data:/data
+    ports:
+      - 7474:7474
+      - 7687:7687
+    networks:
+      - atlas_net
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: atlas_n8n
+    restart: unless-stopped
+    ports:
+      - 5678:5678
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=Pacific/Auckland
+    volumes:
+      - ./n8n_data:/home/node/.n8n
+    networks:
+      - atlas_net
+  atlas-agent:
+    build: ./atlas_agent
+    container_name: atlas_logic_router
+    restart: unless-stopped
+    ports:
+      - 8000:8000
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - POSTGRES_URL=postgresql://atlas:${POSTGRES_PASSWORD}@postgres:5432/atlas_memory
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USERNAME=neo4j
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+    networks:
+      - atlas_net
+    depends_on:
+      postgres:
+        condition: service_healthy
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: atlas_ui
+    restart: unless-stopped
+    ports:
+      - 3000:8080
+    environment:
+      - OPENAI_API_BASE_URL=http://atlas-agent:8000/v1
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./openwebui_data:/app/backend/data
+      - /root/build-with-ai/projects:/projects:ro
+      - /root/build-with-ai/.strategic:/projects/.strategic:ro
+    networks:
+      - atlas_net
+    depends_on:
+      - atlas-agent

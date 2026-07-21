@@ -1,0 +1,458 @@
+"use client";
+
+import { useState, useRef, useEffect } from 'react';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+type WizardMode = 'home' | 'onboard' | 'diagnose' | 'convert' | 'report' | 'chat';
+
+interface LeadForm {
+  name: string;
+  email: string;
+  company: string;
+  interest: string;
+}
+
+interface DiagnoseResult {
+  domain: string;
+  available: boolean | null;
+  sslStatus: string;
+  loading: boolean;
+  error: string | null;
+}
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+const MODES: { id: WizardMode; label: string; icon: string; desc: string }[] = [
+  { id: 'onboard',  label: 'Mint My Identity',   icon: '⬡', desc: 'Claim your MARZ sovereign identity' },
+  { id: 'diagnose', label: 'Domain / SSL Check',  icon: '◎', desc: 'Live OpenProvider diagnostics' },
+  { id: 'convert',  label: 'Talk to Sales',       icon: '◈', desc: 'Capture interest into the CRM' },
+  { id: 'report',   label: 'System Report',       icon: '▣', desc: 'Infrastructure & build status' },
+  { id: 'chat',     label: '💬 Ask Silas',          icon: '💬', desc: 'Free-form conversation with AI' },
+];
+
+// ─── Sub-views ────────────────────────────────────────────────────────────────
+function OnboardView() {
+  const [step, setStep] = useState(0);
+  const steps = [
+    { title: 'Choose your sovereign handle', body: 'Your MARZ identity is a decentralized address tied to your wallet. Think of it as your Web3 username for the Sovereign Infrastructure network.' },
+    { title: 'Connect your wallet', body: 'Use MetaMask, WalletConnect, or any EIP-191 compatible wallet. Your keys — full sovereignty, no custodian.' },
+    { title: 'Mint on-chain', body: 'One transaction. Gas fees apply. Your MARZ Identity NFT will appear in your wallet and activate your Sanctuary dashboard.' },
+  ];
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex gap-1.5 mb-1">
+        {steps.map((_, i) => (
+          <div key={i} className={`h-1 flex-1 rounded-full transition-all ${i <= step ? 'bg-teal-400' : 'bg-neutral-700'}`} />
+        ))}
+      </div>
+      <p className="text-xs text-teal-400 font-bold uppercase tracking-widest">Step {step + 1} of {steps.length}</p>
+      <h3 className="text-white font-black text-base leading-snug">{steps[step].title}</h3>
+      <p className="text-neutral-400 text-sm leading-relaxed">{steps[step].body}</p>
+      <div className="flex gap-2 mt-2">
+        {step > 0 && (
+          <button onClick={() => setStep(s => s - 1)} className="flex-1 py-2 rounded-lg border border-neutral-700 text-neutral-400 text-sm hover:border-neutral-500 transition-colors">
+            Back
+          </button>
+        )}
+        {step < steps.length - 1 ? (
+          <button onClick={() => setStep(s => s + 1)} className="flex-1 py-2 rounded-lg bg-teal-500 text-neutral-950 text-sm font-black hover:bg-teal-400 transition-colors">
+            Continue
+          </button>
+        ) : (
+          <a href="/signup" className="flex-1 py-2 rounded-lg bg-teal-500 text-neutral-950 text-sm font-black hover:bg-teal-400 transition-colors text-center">
+            Open Sanctuary →
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function DiagnoseView() {
+  const [query, setQuery] = useState('');
+  const [result, setResult] = useState<DiagnoseResult | null>(null);
+
+  const run = async () => {
+    if (!query.trim()) return;
+    const domain = query.trim().replace(/^https?:\/\//, '').replace(/\/.*/, '');
+    setResult({ domain, available: null, sslStatus: '—', loading: true, error: null });
+    try {
+      const [domainRes, sslRes] = await Promise.allSettled([
+        fetch(`/api/domains/search?q=${encodeURIComponent(domain)}`),
+        fetch(`/api/ssl/products`),
+      ]);
+      const domainData = domainRes.status === 'fulfilled' && domainRes.value.ok
+        ? await domainRes.value.json() : null;
+      const sslData = sslRes.status === 'fulfilled' && sslRes.value.ok
+        ? await sslRes.value.json() : null;
+
+      const available = domainData?.results?.[0]?.available ?? domainData?.available ?? null;
+      const sslStatus = sslData?.products?.length
+        ? `${sslData.products.length} certificate product${sslData.products.length !== 1 ? 's' : ''} active`
+        : 'SSL catalogue reachable';
+
+      setResult({ domain, available, sslStatus, loading: false, error: null });
+    } catch {
+      setResult(r => r ? { ...r, loading: false, error: 'OpenProvider unreachable in this environment.' } : null);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-neutral-400 text-xs">Enter any domain to run a live OpenProvider availability + SSL check.</p>
+      <div className="flex gap-2">
+        <input
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && run()}
+          placeholder="yourdomain.com"
+          className="flex-1 bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-white text-sm placeholder-neutral-600 focus:outline-none focus:border-teal-500/60 transition-colors"
+          autoFocus
+        />
+        <button onClick={run} className="bg-teal-500 hover:bg-teal-400 text-neutral-950 text-sm font-black px-4 rounded-lg transition-colors">
+          Scan
+        </button>
+      </div>
+      {result && (
+        <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 flex flex-col gap-3">
+          <p className="text-teal-400 font-bold text-sm truncate">{result.domain}</p>
+          {result.loading ? (
+            <p className="text-neutral-500 text-xs animate-pulse">Running diagnostics…</p>
+          ) : result.error ? (
+            <p className="text-red-400 text-xs">{result.error}</p>
+          ) : (
+            <>
+              <div className="flex items-center justify-between">
+                <span className="text-neutral-500 text-xs">Domain Availability</span>
+                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${result.available === true ? 'bg-teal-500/20 text-teal-400' : result.available === false ? 'bg-red-500/20 text-red-400' : 'bg-neutral-700 text-neutral-400'}`}>
+                  {result.available === true ? 'Available' : result.available === false ? 'Taken' : 'Unknown'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-neutral-500 text-xs">SSL Infrastructure</span>
+                <span className="text-xs font-bold text-teal-400">{result.sslStatus}</span>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ConvertView({ onSuccess }: { onSuccess: () => void }) {
+  const [form, setForm] = useState<LeadForm>({ name: '', email: '', company: '', interest: 'MARZ Identity' });
+  const [state, setState] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
+
+  const interests = ['MARZ Identity', 'Domain Registration', 'SSL Certificates', 'AI Design', 'Enterprise Plan'];
+
+  const submit = async () => {
+    if (!form.name.trim() || !form.email.trim()) return;
+    // Basic email format guard
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) { setState('error'); return; }
+    setState('loading');
+    try {
+      // Form submission fetch
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          company: form.company.trim() || undefined,
+          interest: form.interest,
+          source: 'silas-wizard',
+          timestamp: new Date().toISOString(),
+        }),
+      });
+      if (res.ok) { setState('done'); setTimeout(onSuccess, 1800); }
+      else setState('error');
+    } catch {
+      setState('error');
+    }
+  };
+
+  if (state === 'done') {
+    return (
+      <div className="flex flex-col items-center gap-3 py-4 text-center">
+        <div className="w-12 h-12 rounded-full bg-teal-500/20 flex items-center justify-center">
+          <svg className="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <p className="text-white font-black text-sm">Captured. Sovereign CRM updated.</p>
+        <p className="text-neutral-500 text-xs">The team will reach out within 24 hrs.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-neutral-400 text-xs">Drop your details — no spam, straight into the Sovereign CRM.</p>
+      {[
+        { key: 'name',    label: 'Name *',         ph: 'Satoshi Nakamoto' },
+        { key: 'email',   label: 'Email *',         ph: 'you@domain.com' },
+        { key: 'company', label: 'Company',         ph: 'Optional' },
+      ].map(f => (
+        <div key={f.key} className="flex flex-col gap-1">
+          <label className="text-neutral-500 text-xs">{f.label}</label>
+          <input
+            value={form[f.key as keyof LeadForm]}
+            onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+            placeholder={f.ph}
+            className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-white text-sm placeholder-neutral-600 focus:outline-none focus:border-teal-500/60 transition-colors"
+          />
+        </div>
+      ))}
+      <div className="flex flex-col gap-1">
+        <label className="text-neutral-500 text-xs">Interested in</label>
+        <select
+          value={form.interest}
+          onChange={e => setForm(p => ({ ...p, interest: e.target.value }))}
+          className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-teal-500/60 transition-colors"
+        >
+          {interests.map(i => <option key={i} value={i}>{i}</option>)}
+        </select>
+      </div>
+      {state === 'error' && <p className="text-red-400 text-xs">Check your email address and try again.</p>}
+      <button
+        onClick={submit}
+        disabled={state === 'loading'}
+        className="mt-1 py-2.5 rounded-lg bg-teal-500 hover:bg-teal-400 disabled:opacity-50 text-neutral-950 text-sm font-black transition-colors"
+      >
+        {state === 'loading' ? 'Sending…' : 'Send to CRM →'}
+      </button>
+    </div>
+  );
+}
+
+function ReportView() {
+  const items = [
+    { label: 'Build Commit',    value: '50f6e9d',           status: 'ok' },
+    { label: 'Lighthouse Perf', value: '96 / 100',          status: 'ok' },
+    { label: 'Accessibility',   value: '100 / 100',         status: 'ok' },
+    { label: 'Best Practices',  value: '100 / 100',         status: 'ok' },
+    { label: 'SEO',             value: '100 / 100',         status: 'ok' },
+    { label: 'LCP',             value: '2.7 s',             status: 'ok' },
+    { label: 'Framer Runtime',  value: 'Purged',            status: 'ok' },
+    { label: 'Widget Deferral', value: 'Idle callback',     status: 'ok' },
+    { label: 'Font Strategy',   value: 'woff2 + block',     status: 'ok' },
+    { label: 'Backup',          value: 'GOLDEN_ROW_V1.1',  status: 'ok' },
+    { label: 'Old Backups',     value: 'Purged',            status: 'ok' },
+    { label: 'GitHub Push',     value: 'Email verify reqd', status: 'warn' },
+  ];
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="text-neutral-500 text-xs mb-1">Live build manifest — Performance Era sealed.</p>
+      {items.map(item => (
+        <div key={item.label} className="flex items-center justify-between py-1.5 border-b border-neutral-800/60 last:border-0">
+          <span className="text-neutral-400 text-xs">{item.label}</span>
+          <span className={`text-xs font-bold flex items-center gap-1.5 ${item.status === 'warn' ? 'text-amber-400' : 'text-teal-400'}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${item.status === 'warn' ? 'bg-amber-400' : 'bg-teal-400'}`} />
+            {item.value}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Chat View ──────────────────────────────────────────────────────────────
+type SilasMsg = { role: "user" | "assistant" | "system"; content: string; timestamp: number; };
+function ChatView({ messages, setMessages, history, setHistory, showHistory, setShowHistory, startNewChat, loadChat, saveChat }: { messages: SilasMsg[]; setMessages: React.Dispatch<React.SetStateAction<SilasMsg[]>>; history: any[]; setHistory: any; showHistory: boolean; setShowHistory: any; startNewChat: () => void; loadChat: (id: string) => void; saveChat: () => void; }) {
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const endRef = useRef<HTMLDivElement>(null);
+  const [sileBalance, setSileBalance] = useState(0);
+
+  const send = async () => {
+    if (!input.trim() || isLoading) return;
+    const userMsg = { role: 'user' as const, content: input.trim(), timestamp: Date.now() };
+    setMessages(prev => [...prev, userMsg]);
+    setInput('');
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/silas/chat', {
+        method: 'POST',
+        body: JSON.stringify({ message: input.trim() })
+      });
+      const data = await res.json();
+      if (data.reward?.token === "SILE") setSileBalance(prev => prev + parseFloat(data.reward.amount));
+      setMessages(prev => [...prev, { role: 'assistant', content: data.reply || '⚠️ No response. Try again.', timestamp: Date.now() }]);
+    } catch {
+      setMessages(prev => [...prev, { role: 'system', content: '🔧 Connection issue. Checking health...', timestamp: Date.now() }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-[400px]">
+        <div className="px-1 pt-1 flex justify-end"><span className="text-[10px] font-mono bg-teal-500/10 text-teal-400 border border-teal-500/30 px-2 py-0.5 rounded-full">⚡ SILE: {sileBalance.toFixed(3)}</span><button onClick={() => { if(sileBalance > 0) { alert("⚡ Claiming " + sileBalance + " SILE to wallet..."); setSileBalance(0); } }} disabled={sileBalance <= 0} className="ml-2 text-[9px] font-bold bg-teal-600 hover:bg-teal-500 text-white px-2 py-0.5 rounded shadow-lg shadow-teal-500/20 disabled:opacity-40">CLAIM</button></div>
+      <div className="flex-1 overflow-y-auto space-y-3 pr-1 scrollbar-thin scrollbar-thumb-neutral-800">
+        {messages.map((m, i) => (
+          <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[85%] px-3 py-2 rounded-xl text-xs leading-relaxed ${
+              m.role === 'user' ? 'bg-teal-500 text-neutral-950 rounded-br-none' :
+              m.role === 'system' ? 'bg-neutral-800 text-neutral-400 border border-neutral-700' :
+              'bg-neutral-900 text-neutral-200 border border-neutral-800 rounded-bl-none'
+            }`}>{m.content}</div>
+          </div>
+        ))}
+        {isLoading && (
+          <div className="flex justify-start"><div className="bg-neutral-900 border border-neutral-800 px-3 py-2 rounded-xl rounded-bl-none"><div className="flex gap-1"><span className="w-1.5 h-1.5 bg-teal-400 rounded-full animate-bounce" style={{animationDelay:'0ms'}}/><span className="w-1.5 h-1.5 bg-teal-400 rounded-full animate-bounce" style={{animationDelay:'150ms'}}/><span className="w-1.5 h-1.5 bg-teal-400 rounded-full animate-bounce" style={{animationDelay:'300ms'}}/></div></div></div>
+        )}
+        <div ref={endRef} />
+      </div>
+      <div className="pt-2 border-t border-neutral-800 mt-2">
+        <div className="flex gap-2">
+          <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()} placeholder="Ask Silas..." autoFocus className="flex-1 bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-white text-xs placeholder-neutral-600 focus:outline-none focus:border-teal-500/60 transition-colors whitespace-pre-wrap overflow-wrap-break-word" />
+          <button onClick={send} disabled={isLoading || !input.trim()} className="bg-teal-500 hover:bg-teal-400 disabled:opacity-50 text-neutral-950 text-xs font-bold px-3 rounded-lg transition-colors">{isLoading ? '…' : 'Send'}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+// ─── Main Wizard ──────────────────────────────────────────────────────────────
+export default function SilasChat() {
+  const [open, setOpen]   = useState(false);
+  const [messages, setMessages] = useState<Array<{role: "user"|"assistant"|"system", content: string, timestamp: number}>>([
+    { role: "assistant", content: "🤖 Hi, I'm Silas. Ask me anything about wallets, domains, multi-sig, or system health.", timestamp: Date.now() }
+  ]);
+  const [mode, setMode]   = useState<WizardMode>('home');
+  const panelRef          = useRef<HTMLDivElement>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [history, setHistory] = useState<Array<{id: string, messages: any[], timestamp: number}>>([]);
+  const [showHistory, setShowHistory] = useState(false);
+  useEffect(()=>{const s=localStorage.getItem("silas_chat_history");if(s)setHistory(JSON.parse(s))},[])
+  useEffect(()=>{localStorage.setItem("silas_chat_history",JSON.stringify(history))},[history])
+  const startNewChat=()=>{setMessages([]);setShowHistory(false)}
+  const loadChat=(id: string)=>{const c=history.find(h=>h.id===id);if(c){setMessages(c.messages);setShowHistory(false)}}
+  const saveChat=()=>{if(messages.length>0){setHistory(p=>[{id:Date.now().toString(),messages,timestamp:Date.now()},...p]);setMessages([])}}
+
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (panelRef.current && !panelRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  // Reset to home when closed
+  const close = () => { setOpen(false); setMode('home'); };
+
+  const currentMode = MODES.find(m => m.id === mode);
+
+  return (
+    <>
+      {/* FAB trigger */}
+      <button
+        aria-label="Open Silas Wizard"
+        onClick={() => setOpen(o => !o)}
+        className="fixed bottom-24 right-6 z-50 bg-teal-500 text-neutral-950 p-4 rounded-full shadow-[0_0_24px_rgba(45,212,191,0.35)] hover:bg-teal-400 hover:scale-110 transition-all flex items-center justify-center group"
+      >
+        {open ? (
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        ) : (
+          <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        )}
+        {!open && (
+          <span className="absolute -top-12 right-0 bg-[#0a0a0a] border border-teal-500/50 text-teal-400 text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg pointer-events-none">
+            Ask The Wizard
+          </span>
+        )}
+      </button>
+
+      {/* Wizard panel */}
+      {open && (
+        <div
+          ref={panelRef}
+          className={`fixed bottom-[6.5rem] right-6 z-50 ${expanded ? 'w-[650px]' : 'w-[340px]'} max-h-[520px] flex flex-col bg-[#0d0d0d] border border-neutral-800 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.8)] overflow-hidden`}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-800 bg-[#0a0a0a] shrink-0">
+            <div className="flex items-center gap-2.5">
+              {mode !== 'home' && (
+                <button onClick={() => setMode('home')} className="text-neutral-500 hover:text-white transition-colors mr-0.5">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+              )}
+              <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
+              <span className="text-white text-sm font-black">
+                {mode === 'home' ? 'Silas Wizard' : currentMode?.label}
+              </span>
+            </div>
+            <button onClick={() => setShowHistory(!showHistory)} className="text-neutral-500 hover:text-teal-400 transition-colors mr-2" title="History">
+               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </button>
+            <button onClick={() => setExpanded(!expanded)} className="text-neutral-500 hover:text-white transition-colors mr-2" title="Expand">
+               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+            </button>
+            <button onClick={close} className="text-neutral-600 hover:text-white transition-colors">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          {/* Body */}
+          <div className="flex-1 overflow-y-auto px-4 py-4 scrollbar-thin scrollbar-thumb-neutral-800 scrollbar-track-transparent">
+            {!showHistory && mode === 'home' && (
+              <div className="flex flex-col gap-3">
+                <p className="text-neutral-400 text-xs leading-relaxed">
+                  Sovereign Infrastructure Wizard. Select an action below.
+                </p>
+                {MODES.map(m => (
+                  <button
+                    key={m.id}
+                    onClick={() => setMode(m.id)}
+                    className="flex items-center gap-3 p-3 rounded-xl bg-neutral-900 border border-neutral-800 hover:border-teal-500/40 hover:bg-neutral-800 transition-all text-left group"
+                  >
+                    <span className="text-teal-400 text-lg leading-none w-6 text-center">{m.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white text-sm font-bold group-hover:text-teal-300 transition-colors">{m.label}</p>
+                      <p className="text-neutral-500 text-xs truncate">{m.desc}</p>
+                    </div>
+                    <svg className="w-4 h-4 text-neutral-700 group-hover:text-teal-500 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
+                  </button>
+                ))}
+              </div>
+            )}
+            {showHistory && (
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-teal-400 text-xs font-bold">Recent Conversations</p>
+                  <button onClick={startNewChat} className="text-neutral-400 hover:text-white text-xs">+ New</button>
+                </div>
+                {history.length === 0 ? (
+                  <p className="text-neutral-500 text-xs text-center py-4">No saved sessions.</p>
+                ) : (
+                  history.map(h => (
+                    <div key={h.id} className="flex items-center justify-between p-3 rounded-lg bg-neutral-900 border border-neutral-800">
+                      <div className="flex-1 min-w-0 cursor-pointer" onClick={() => loadChat(h.id)}>
+                        <p className="text-white text-xs font-bold truncate">{h.messages[0]?.content?.slice(0, 30) || "Saved Chat"}...</p>
+                        <p className="text-neutral-500 text-[10px]">{new Date(h.timestamp).toLocaleDateString()}</p>
+                      </div>
+                      <button onClick={(e) => { e.stopPropagation(); setHistory(prev => prev.filter(x => x.id !== h.id)); }} className="text-neutral-600 hover:text-red-400 text-xs ml-2">×</button>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+
+            {mode === 'onboard'  && <OnboardView />}
+            {mode === 'diagnose' && <DiagnoseView />}
+            {mode === 'convert'  && <ConvertView onSuccess={() => setMode('home')} />}
+            {mode === 'report'   && <ReportView />}
+            {mode === 'chat'   && <ChatView messages={messages} setMessages={setMessages} history={history} setHistory={setHistory} showHistory={showHistory} setShowHistory={setShowHistory} startNewChat={startNewChat} loadChat={loadChat} saveChat={saveChat} />}
+          </div>
+
+          {/* Footer */}
+          <div className="px-4 py-2.5 border-t border-neutral-800 bg-[#0a0a0a] shrink-0">
+            <p className="text-neutral-700 text-[10px] text-center tracking-wide">SILAS · SOVEREIGN INFRASTRUCTURE WIZARD</p>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}

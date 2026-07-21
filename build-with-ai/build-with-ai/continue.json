@@ -1,0 +1,40 @@
+{
+  "models": [
+    {
+      "id": "qwen2.5-coder:32b",
+      "title": "Qwen 2.5 Coder 32B",
+      "provider": "ollama",
+      "model": "qwen2.5-coder:32b",
+      "apiBase": "http://localhost:11434",
+      "contextLength": 32768
+    },
+    {
+      "id": "qwen2.5-coder:7b",
+      "title": "Qwen 2.5 Coder 7B (Autocomplete)",
+      "provider": "ollama",
+      "model": "qwen2.5-coder:7b",
+      "apiBase": "http://localhost:11434",
+      "contextLength": 8192,
+      "completionType": "autocomplete"
+    },
+    {
+      "id": "nomic-embed-text",
+      "title": "Nomic Embed",
+      "provider": "ollama",
+      "model": "nomic-embed-text",
+      "apiBase": "http://localhost:11434",
+      "contextLength": 8192,
+      "completionType": "embedding"
+    }
+  ],
+
+  "tabAutocompleteModel": "Qwen 2.5 Coder 7B (Autocomplete)",
+  "embeddingsProvider": "Nomic Embed",
+
+  "agent": {
+    "enabled": true,
+    "allowShell": true,
+    "allowWrite": true,
+    "allowRead": true
+  }
+}

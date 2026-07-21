@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Build With AI — Launching Soon</title>
+  <meta name="description" content="Sovereign AI-native infrastructure for Web2/Web3 teams — launching soon." />
+  <style>
+    :root{--bg:#0f1724;--accent:#06b6d4;--muted:#94a3b8;--card:#0b1220}
+    html,body{height:100%;margin:0}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:linear-gradient(180deg,#071029 0%, #071a2a 60%), var(--bg); color:#fff; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;}
+    .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:48px;box-sizing:border-box;}
+    .container{width:100%;max-width:1200px;display:grid;grid-template-columns:1fr 420px;gap:48px;align-items:center;}
+    .left{padding:24px}
+    h1{font-size:clamp(28px,6vw,56px);line-height:1.02;margin:0 0 12px;font-weight:700}
+    p.lead{color:var(--muted);font-size:18px;margin:0 0 24px;max-width:720px}
+    .countdown{display:flex;gap:12px;margin-bottom:28px}
+    .countdown > div{background:rgba(255,255,255,0.04);padding:12px 16px;border-radius:10px;text-align:center;min-width:84px}
+    .countdown .num{font-weight:700;font-size:18px}
+    .right{background:rgba(255,255,255,0.03);padding:28px;border-radius:14px;backdrop-filter:blur(6px);box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+    input[type="email"]{width:100%;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff;margin-bottom:12px;box-sizing:border-box}
+    button{width:100%;padding:12px 14px;border-radius:10px;border:none;background:var(--accent);color:#042027;font-weight:700;cursor:pointer}
+    .muted{color:var(--muted);font-size:13px;margin-top:12px}
+    @media (max-width:900px){ .container{grid-template-columns:1fr;gap:20px} .right{order:2} .left{order:1} }
+  </style>
+</head>
+<body>
+  <main class="hero" role="main">
+    <div class="container">
+      <section class="left" aria-labelledby="hero-title">
+        <h1 id="hero-title">BUILD WITH AI — Enterprise Dev OS</h1>
+        <p class="lead">Sovereign AI-native infrastructure for Web2 and Web3 teams. Enterprise-grade security, zero dependency, and on-chain identity tooling.</p>
+
+        <div class="countdown" aria-hidden="true">
+          <div><div class="num" id="cd-days">00</div><div class="muted">DAYS</div></div>
+          <div><div class="num" id="cd-hours">00</div><div class="muted">HOURS</div></div>
+          <div><div class="num" id="cd-mins">00</div><div class="muted">MINUTES</div></div>
+          <div><div class="num" id="cd-secs">00</div><div class="muted">SECONDS</div></div>
+        </div>
+
+        <p class="muted">Launching June 14, 2026 — join the waitlist for early access and updates.</p>
+      </section>
+
+      <aside class="right" aria-labelledby="waitlist-title">
+        <h2 id="waitlist-title" style="margin:0 0 12px">Join the waitlist</h2>
+        <form id="subscribeForm" onsubmit="return submitForm(event)" aria-describedby="waitlist-note">
+          <label for="email" class="sr-only" style="display:none">Email</label>
+          <input id="email" type="email" placeholder="you@company.com" required />
+          <button type="submit">Get Early Access</button>
+        </form>
+        <div id="msg" class="muted" aria-live="polite"></div>
+        <div id="waitlist-note" class="muted">We’ll only email launch updates. No spam.</div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    // simple countdown to June 14, 2026 00:00 UTC
+    (function(){
+      const target = new Date('2026-06-14T00:00:00Z').getTime();
+      function tick(){
+        const now = Date.now();
+        const diff = Math.max(0, target - now);
+        const days = Math.floor(diff / (24*60*60*1000));
+        const hours = Math.floor((diff % (24*60*60*1000)) / (60*60*1000));
+        const mins = Math.floor((diff % (60*60*1000)) / (60*1000));
+        const secs = Math.floor((diff % (60*1000)) / 1000);
+        document.getElementById('cd-days').textContent = String(days).padStart(2,'0');
+        document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+        document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
+        document.getElementById('cd-secs').textContent = String(secs).padStart(2,'0');
+      }
+      tick(); setInterval(tick,1000);
+    })();
+
+    async function submitForm(e){
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const msg = document.getElementById('msg');
+      msg.textContent = 'Saving...';
+      try {
+        const res = await fetch('/api/launching-soon/subscribe', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ email })
+        });
+        const j = await res.json();
+        if(j.ok){ msg.textContent = 'Thanks — you are on the list!'; document.getElementById('email').value=''; if(window.gtag) gtag('event','subscribe',{method:'launching-soon'}); }
+        else msg.textContent = 'Could not save email. Try again.';
+      } catch(err){ msg.textContent = 'Network error. Try again later.'; }
+      return false;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+
+# 2026-05-02 04:08:35.355861
++echo 'export OLLAMA_API_BASE=http://127.0.0.1:11434' >> ~/.bashrc
++source ~/.bashrc
+
+# 2026-05-02 04:10:51.038097
++exit
+
+# 2026-05-02 04:12:49.058930
++Please analyze the project structure. Briefly explain the purpose of this project and list the 3 most important files I should look at to understand how it works.
+
+# 2026-05-02 04:38:36.130747
++/ls

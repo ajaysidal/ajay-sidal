@@ -1,0 +1,102 @@
+
+// TEMP STUB: Privy session verification → Alchemy+Openfort
+export const verifySession = async () => {
+  console.warn('verifySession stub: Implement Alchemy Account Kit session validation');
+  return null; // Return mock user object when ready: { id: '...', email: '...' }
+};
+
+import { NextResponse } from 'next/server';
+import Stripe from 'stripe';
+import { allProducts } from '@/lib/openprovider-products';
+import { verifySession } from '@/lib/privy';
+import { logger } from '@/lib/logger';
+import { startSpan } from '@/lib/tracing';
+
+interface CartPayloadItem {
+  id: string;
+  quantity: number;
+}
+
+// Initialize Stripe with the secret key
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-06-20',
+});
+
+export async function POST(req: Request) {
+  const span = startSpan('checkout.create');
+  
+  if (!process.env.STRIPE_SECRET_KEY) {
+    logger.error('Missing STRIPE_SECRET_KEY');
+    return new NextResponse('Stripe secret key not configured.', { status: 500 });
+  }
+
+  try {
+    // Get user from Privy session
+    const privyUser = await verifySession();
+    const userEmail = privyUser?.email || undefined;
+    const userId = privyUser?.id || '';
+
+    const { cartItems: clientCartItems } = (await req.json()) as { cartItems: CartPayloadItem[] };
+
+    if (!clientCartItems || clientCartItems.length === 0) {
+      return new NextResponse('No items in cart.', { status: 400 });
+    }
+
+    // Harden the process by fetching prices and details on the server
+    const line_items = clientCartItems.map((item) => {
+      const product = allProducts.find((p) => p.id === item.id);
+      if (!product) {
+        throw new Error(`Product with ID ${item.id} not found.`);
+      }
+
+      const price = parseFloat(product.pricing?.startingFrom || '0');
+      if (isNaN(price) || price <= 0) {
+        throw new Error(`Invalid price for product: ${product.name}`);
+      }
+
+      return {
+        price_data: {
+          currency: product.pricing?.currency.toLowerCase() || 'usd',
+          product_data: {
+            name: product.name,
+            description: product.description,
+            metadata: {
+              // Pass internal product ID for reconciliation
+              productId: product.id,
+            },
+          },
+          unit_amount: Math.round(price * 100), // Stripe expects amount in cents
+        },
+        quantity: item.quantity,
+      };
+    });
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
+    // Create a Stripe Checkout Session
+    logger.info('Creating stripe checkout session', { userEmail, items: clientCartItems.length });
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items,
+      customer_email: userEmail, // Pre-fill the user's email
+      mode: 'payment',
+      success_url: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${siteUrl}/checkout/cancel`,
+      metadata: {
+        // Pass the user's Privy DID for reconciliation
+        userId,
+        cart: JSON.stringify(clientCartItems.map((item) => item.id)),
+      },
+    });
+    
+    span.end({ sessionId: session.id });
+    logger.info('Stripe session created', { sessionId: session.id });
+    
+    return NextResponse.json({ sessionId: session.id });
+  } catch (error) {
+    span.end({ error: error instanceof Error ? error.message : String(error) });
+    logger.error('[STRIPE API Error]', { error });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return new NextResponse(`Failed to create Stripe session: ${errorMessage}`, { status: 500 });
+  }
+}

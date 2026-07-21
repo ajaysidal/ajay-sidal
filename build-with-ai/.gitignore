@@ -1,0 +1,46 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+out/
+
+# build output
+build/
+dist/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+data/*.log
+
+# env (SECURITY: Never commit secrets)
+.env
+.env.*
+!.env.example
+.env.local
+.env.*.local
+*.local
+
+# local lead capture (runtime)
+data/*.jsonl
+data/lead-statuses.json
+data/proposals.json
+data/projects/
+data/affiliate_sales.jsonl
+data/partners.json
+
+# misc
+.DS_Store
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+
+# playwright
+playwright-report/
+test-results/
+.backups/

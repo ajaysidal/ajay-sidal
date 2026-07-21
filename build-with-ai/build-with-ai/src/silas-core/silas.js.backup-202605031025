@@ -1,0 +1,26 @@
+export async function silasChat(message) {
+  const response = await fetch("http://localhost:11434/api/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "qwen2.5:14b",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are Silas, a sovereign AI assistant running on a local 14B model. You assist with coding, debugging, architecture, explanations, and development tasks inside VS Code. You also have terminal access when requested. Always respond clearly, directly, and helpfully."
+        },
+        {
+          role: "user",
+          content: message
+        }
+      ],
+      stream: false
+    })
+  });
+
+  const data = await response.json();
+  return data.message?.content || "No response from Silas.";
+}
