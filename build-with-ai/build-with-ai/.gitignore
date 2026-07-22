@@ -44,3 +44,5 @@ data/partners.json
 playwright-report/
 test-results/
 .backups/
+.vercel
+.env*
